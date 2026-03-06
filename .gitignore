@@ -1,0 +1,8 @@
+__pycache__/
+enemies/
+!enemies/.gitkeep
+templates/
+!templates/.gitkeep
+templates_2/
+!templates_2/.gitkeep
+venv/
