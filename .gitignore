@@ -6,3 +6,4 @@ templates/*
 templates_2/*
 !templates_2/.gitkeep
 venv/
+prueba.py

@@ -13,7 +13,7 @@ import move
 #esta es una prueva
 
 RANGO_MINIMO = 50
-RANGO_MAXIMO = 300
+RANGO_MAXIMO = 80
 
 
 ############################################
