@@ -120,32 +120,23 @@ def detectar_enemigos(edges_screen):
 # CARGAR TEMPLATES
 ############################################
 
-templates = {
+templates = {}
+def cargar_templates():
 
-    "rango":cv2.imread(os.path.join(TEMPLATES_PATH,"rango.png"),0),
-    "cruz":cv2.imread(os.path.join(TEMPLATES_PATH,"cruz.png"),0),
-    "zona":cv2.imread(os.path.join(TEMPLATES_PATH,"zona.png"),0),
-    "publi":cv2.imread(os.path.join(TEMPLATES_PATH,"publi.png"),0),
-    "atacar":cv2.imread(os.path.join(TEMPLATES_PATH,"atacar.png"),0),
+    for archivo in os.listdir(TEMPLATES_PATH):
 
-    "combate":cv2.imread(os.path.join(TEMPLATES_PATH,"combate.png"),0),
-    "listo":cv2.imread(os.path.join(TEMPLATES_PATH,"listo.png"),0),
-    "pasar":cv2.imread(os.path.join(TEMPLATES_PATH,"pasar_turno.png"),0),
-    "salir_combate":cv2.imread(os.path.join(TEMPLATES_PATH,"salir_combate.png"),0),
+        if archivo.endswith(".png"):
 
-    "muerto":cv2.imread(os.path.join(TEMPLATES_PATH,"muerto.png"),0),
-    "fenix":cv2.imread(os.path.join(TEMPLATES_PATH,"fenix.png"),0),
-    "set":cv2.imread(os.path.join(TEMPLATES_PATH,"set.png"),0),
-    "llanura":cv2.imread(os.path.join(TEMPLATES_PATH,"llanura.png"),0),
-    "21":cv2.imread(os.path.join(TEMPLATES_PATH,"21.png"),0),
-    "56":cv2.imread(os.path.join(TEMPLATES_PATH,"56.png"),0),
+            nombre = os.path.splitext(archivo)[0]
 
-    "flecha_derecha":cv2.imread(os.path.join(TEMPLATES_PATH,"flecha_derecha.png"),0),
-    "flecha_izquierda":cv2.imread(os.path.join(TEMPLATES_PATH,"flecha_izquierda.png"),0),
-    "flecha_arriba":cv2.imread(os.path.join(TEMPLATES_PATH,"flecha_arriba.png"),0),
-    "flecha_abajo":cv2.imread(os.path.join(TEMPLATES_PATH,"flecha_abajo.png"),0),
+            ruta = os.path.join(TEMPLATES_PATH, archivo)
 
-}
+            img = cv2.imread(ruta, 0)
+
+            templates[nombre] = img
+
+
+cargar_templates()
 
 
 ############################################

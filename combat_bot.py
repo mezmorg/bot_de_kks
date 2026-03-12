@@ -166,6 +166,24 @@ def cambiar_sala():
 
             if zona:
                 return True
+            else: #intentar retornar inmediatamente
+                match d:
+                    case "derecha":
+                        if not move.moverse("izquierda"):
+                            if not move.moverse("izquierda",50):
+                                move.moverse("izquierda",-50)
+                    case "izquierda":
+                        if not move.moverse("derecha"):
+                            if not move.moverse("derecha",50):
+                                move.moverse("derecha",-50)
+                    case "arriba":
+                        if not move.moverse("abajo"):
+                            if not move.moverse("abajo",50):
+                                move.moverse("abajo",-50)
+                    case "abajo":
+                        if not move.moverse("arriba"):
+                            if not move.moverse("arriba",50):
+                                move.moverse("arriba",-50)
 
     return False
 

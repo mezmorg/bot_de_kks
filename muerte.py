@@ -48,8 +48,9 @@ def cerrar_mensaje_muerte():
 def activar_fenix():
 
     while True:
-
-        publi.check()
+        
+        while publi.check() is not None:
+            time.sleep(1)
 
         img, gray, edges = vision.capturar_pantalla()
 
@@ -80,26 +81,54 @@ def equipar_set():
 
     while True:
 
-        publi.check()
-
-        img, gray, edges = vision.capturar_pantalla()
+        img,gray,edges = vision.capturar_pantalla()
 
         set_icon = vision.detectar_template(
             gray,
             vision.templates["set"]
         )
 
-        if set_icon:
-
-            x,y = set_icon[0]
-            h,w = set_icon[1]
-
-            pyautogui.doubleClick(x+w//2,y+h//2)
-            time.sleep(1)
-
-            pyautogui.doubleClick(x+w//2,y+h//2)
-
+        if not set_icon:
             return
+
+        x,y = set_icon[0]
+        h,w = set_icon[1]
+
+        pyautogui.click(x+w//2,y+h//2)
+
+        time.sleep(0.6)
+
+        img,gray,edges = vision.capturar_pantalla()
+
+        equipar = vision.detectar_template(
+            gray,
+            vision.templates["equipar"]
+        )
+
+        if equipar:
+            break
+
+
+    ############################################
+    # CLICK EQUIPAR
+    ############################################
+
+    while True:
+
+        img,gray,edges = vision.capturar_pantalla()
+
+        equipar = vision.detectar_template(
+            gray,
+            vision.templates["equipar"]
+        )
+
+        if not equipar:
+            return
+
+        x,y = equipar[0]
+        h,w = equipar[1]
+
+        pyautogui.click(x+w//2,y+h//2)
 
         time.sleep(0.5)
 
@@ -147,7 +176,7 @@ def ruta_regreso():
 
     if not mover_hasta(
         "derecha",
-        vision.templates["llanura"],
+        vision.templates["guia1"],
         20
     ):
         pass
@@ -157,7 +186,7 @@ def ruta_regreso():
 
     if not mover_hasta(
         "abajo",
-        vision.templates["21"],
+        vision.templates["guia2"],
         40,-30
     ):
         pass
@@ -167,7 +196,7 @@ def ruta_regreso():
 
     if not mover_hasta(
         "derecha",
-        vision.templates["56"],
+        vision.templates["guia3"],
         20,50
     ):
         pass

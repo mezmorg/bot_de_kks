@@ -86,9 +86,16 @@ def check():
 
         print("Publicidad detectada")
 
-        pyautogui.press("esc")
+        cerrar = vision.detectar_template(
+            gray,
+            vision.templates["cerrar"]
+        )
+        
+        if cerrar:
+            x,y = cerrar[0]
+            h,w = cerrar[1]
 
-        time.sleep(0.4)
+            pyautogui.click(x+w//2,y+h//2)
 
         return "PUBLI"
 
@@ -105,6 +112,11 @@ def check():
     if muerto:
 
         print("Personaje muerto detectado")
+
+        subprocess.run([
+            sys.executable,
+            os.path.join(BASE_DIR,"grupo.py")
+        ])
 
         subprocess.run([
             sys.executable,

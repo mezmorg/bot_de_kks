@@ -1,66 +1,13 @@
 import time
 import pyautogui
-import ctypes
+import subprocess
+import sys
+import os
 
 import vision
 
 
-############################################
-# CURSOR WINDOWS
-############################################
-
-class CURSORINFO(ctypes.Structure):
-
-    _fields_ = [
-        ("cbSize", ctypes.c_uint),
-        ("flags", ctypes.c_uint),
-        ("hCursor", ctypes.c_void_p),
-        ("ptScreenPos", ctypes.c_long * 2)
-    ]
-
-
-def get_cursor_handle():
-
-    ci = CURSORINFO()
-
-    ci.cbSize = ctypes.sizeof(ci)
-
-    ctypes.windll.user32.GetCursorInfo(ctypes.byref(ci))
-
-    return ci.hCursor
-
-
-############################################
-# PASAR TURNO INTELIGENTE
-############################################
-
-def pasar_turno_inteligente(x,y,w,h):
-
-    bx = x + w//2
-    by = y + h//2
-
-    pyautogui.moveTo(bx,by)
-
-    time.sleep(0.2)
-
-    cursor_base = get_cursor_handle()
-
-    time.sleep(0.1)
-
-    cursor_actual = get_cursor_handle()
-
-    if cursor_actual != cursor_base:
-
-        pyautogui.click()
-
-        sw,sh = pyautogui.size()
-
-        pyautogui.moveTo(sw//2,sh//2)
-
-        time.sleep(0.1)
-
-        pyautogui.moveTo(bx,by)
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ############################################
 # MODO COMBATE
@@ -116,19 +63,36 @@ def combate():
         # PASAR TURNO
         ############################################
 
-        pasar = vision.detectar_template(
+        grupo = vision.detectar_template(
             gray,
-            vision.templates["pasar"]
+            vision.templates["turno_grupo"]
+        )
+        if grupo:
+            subprocess.run([
+                sys.executable,
+                os.path.join(BASE_DIR,"grupo.py")
+            ])
+
+        turno = vision.detectar_template(
+            gray,
+            vision.templates["turno_mio"]
         )
 
-        if pasar:
+        if turno:
 
-            x,y = pasar[0]
-            h,w = pasar[1]
+            pasar = vision.detectar_template(
+                gray,
+                vision.templates["pasar_turno"]
+            )
 
-            pasar_turno_inteligente(x,y,w,h)
+            if pasar:
+                x,y = pasar[0]
+                h,w = pasar[1]
 
-
+                pyautogui.click(x+w//2,y+h//2)
+                time.sleep(1)
+                pyautogui.click(x+w//2,y+h//2)
+                
         time.sleep(0.25)
 
 
