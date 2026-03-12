@@ -1,6 +1,5 @@
 import time
 import pyautogui
-import ctypes
 import subprocess
 import sys
 import os
@@ -9,30 +8,6 @@ import vision_grupo
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-############################################
-# CURSOR WINDOWS
-############################################
-
-class CURSORINFO(ctypes.Structure):
-
-    _fields_ = [
-        ("cbSize", ctypes.c_uint),
-        ("flags", ctypes.c_uint),
-        ("hCursor", ctypes.c_void_p),
-        ("ptScreenPos", ctypes.c_long * 2)
-    ]
-
-
-def get_cursor_handle():
-
-    ci = CURSORINFO()
-    ci.cbSize = ctypes.sizeof(ci)
-
-    ctypes.windll.user32.GetCursorInfo(ctypes.byref(ci))
-
-    return ci.hCursor
 
 
 ############################################
@@ -154,46 +129,31 @@ def check():
     # 5. PASAR TURNO (DETENER FLUJO)
     ############################################
 
-    pasar = vision_grupo.detectar_template(
+    turno = vision_grupo.detectar_template(
         gray,
-        vision_grupo.templates["pasar_turno"]
+        vision_grupo.templates["turno_mio"]
     )
-
-    if pasar:
-
-        x, y = pasar[0]
-        h, w = pasar[1]
-
-        bx = x + w // 2
-        by = y + h // 2
-
-        pyautogui.moveTo(bx, by)
-
-        cursor_base = get_cursor_handle()
-
+    tiempo_inicio = time.time()
+    if turno:
         tiempo_inicio = time.time()
-
-        # esperar cursor modo mano
         while True:
+            
+            pasar = vision_grupo.detectar_template(
+                gray,
+                vision_grupo.templates["pasar_turno"]
+            )
 
-            cursor_actual = get_cursor_handle()
+            if pasar:
 
-            if cursor_actual != cursor_base:
-                break
+                x, y = pasar[0]
+                h, w = pasar[1]
+
+                bx = x + w // 2
+                by = y + h // 2
+
+                pyautogui.click(bx, by)
+                time.sleep(0.1)
+                return
 
             if time.time() - tiempo_inicio > 3:
-                return
-
-            time.sleep(0.05)
-
-        # mientras esté activo
-        while True:
-
-            cursor_actual = get_cursor_handle()
-
-            if cursor_actual == cursor_base:
-                return
-
-            pyautogui.click()
-
-            time.sleep(0.2)
+                    return

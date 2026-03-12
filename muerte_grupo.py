@@ -49,25 +49,30 @@ def cerrar_muerte():
 
 def activar_fenix():
 
-    img,gray,edges = vision_grupo.capturar_pantalla()
+    while True:
+        
+        while publi_grupo.check() is not None:
+            time.sleep(1)
 
-    fenix = vision_grupo.detectar_template(
-        gray,
-        vision_grupo.templates["fenix"]
-    )
+        img, gray, edges = vision_grupo.capturar_pantalla()
 
-    if fenix:
+        fenix = vision_grupo.detectar_template(
+            gray,
+            vision_grupo.templates["fenix"]
+        )
 
-        x,y = fenix[0]
-        h,w = fenix[1]
+        if fenix:
 
-        pyautogui.click(x+w//2,y+h//2)
+            x,y = fenix[0]
+            h,w = fenix[1]
 
-        time.sleep(2)
+            pyautogui.click(x+w//2,y+h//2)
+            time.sleep(1)
+            pyautogui.click(x+w//2,y+h//2)
 
-        pyautogui.click(x+w//2,y+h//2)
+            return
 
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 ############################################
@@ -141,14 +146,6 @@ def main():
     ############################################
 
     cerrar_muerte()
-
-
-    ############################################
-    # LIMPIAR PUBLICIDAD / MENSAJES
-    ############################################
-
-    publi_grupo.check()
-
 
     ############################################
     # ACTIVAR FENIX

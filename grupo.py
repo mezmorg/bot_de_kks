@@ -11,8 +11,8 @@ import move_grupo
 # NOMBRES DE VENTANAS
 ############################################
 
-VENTANA_PRINCIPAL = "TouchEmu 2,2"
-VENTANA_SECUNDARIA = "gato-6136f52c"
+VENTANA_PRINCIPAL = "primario-R58Y50SF1XJ"
+VENTANA_SECUNDARIA = "secundario-10ea47b5"
 
 
 ############################################
@@ -108,6 +108,8 @@ def main():
     ############################################
 
     time.sleep(0.3)
+
+    publi_grupo.check()
 
     activar_ventana(VENTANA_PRINCIPAL)
 
