@@ -13,7 +13,7 @@ import move
 #esta es una prueva
 
 RANGO_MINIMO = 50
-RANGO_MAXIMO = 80
+RANGO_MAXIMO = 400
 
 
 ############################################
@@ -240,12 +240,12 @@ def bot():
 
             if dentro_zona(cx,cy):
 
-                print("Descartado por zona muerta")
+                #print("Descartado por zona muerta")
 
                 continue
 
 
-            print("Intento", intento+1, "enemigo indice", indice+1)
+            #print("Intento", intento+1, "enemigo indice", indice+1)
 
 
             pyautogui.click(cx,cy)

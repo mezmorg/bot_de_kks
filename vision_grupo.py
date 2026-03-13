@@ -84,3 +84,37 @@ def detectar_template(gray, template, threshold=THRESHOLD):
         return max_loc, template.shape
 
     return None
+
+def capturar_region(x,y,h,w):
+
+    with mss.mss() as sct:
+
+        region = {
+            "top": y,
+            "left": x,
+            "width": w,
+            "height": h
+        }
+
+        screenshot = sct.grab(region)
+
+        img = np.array(screenshot)[:,:,:3]
+
+        gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+        return img,gray
+    
+def comparar_region(img1,img2,threshold=25):
+
+    import cv2
+    import numpy as np
+
+    diff = cv2.absdiff(img1,img2)
+
+    gray = cv2.cvtColor(diff,cv2.COLOR_BGR2GRAY)
+
+    _,mask = cv2.threshold(gray,threshold,255,cv2.THRESH_BINARY)
+
+    cambios = cv2.countNonZero(mask)
+
+    return cambios

@@ -5,6 +5,7 @@ import sys
 import os
 
 import vision_grupo
+import muerte_grupo
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +31,7 @@ def check():
 
     if muerto:
 
-        subprocess.Popen([
+        subprocess.run([
             sys.executable,
             os.path.join(BASE_DIR, "muerte_grupo.py")
         ])

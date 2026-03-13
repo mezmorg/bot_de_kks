@@ -57,8 +57,9 @@ def detectar_seguir(gray):
         )
 
         if res:
+            print("deteccion de seguir",direccion)
             return direccion
-
+    print("no se detecto seguimiento")
     return None
 
 

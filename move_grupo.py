@@ -1,7 +1,7 @@
 import time
 import pyautogui
 import vision_grupo
-from datetime import datetime
+from datetime import datetime,timedelta
 
 
 ############################################
@@ -86,16 +86,17 @@ def moverse(direccion, desviacion=0):
             flecha_detectada = True
 
 
-    pyautogui.mouseUp()
-
-
     ############################################
     # SI NO HAY FLECHA NO HAY MOVIMIENTO
     ############################################
 
-    if not flecha_detectada:
+    if flecha_detectada:
+        pyautogui.mouseUp()
+    else:
 
         print("No se detectó flecha de movimiento")
+        pyautogui.moveTo(cx,cy)
+        pyautogui.mouseUp()
 
         return False
 
@@ -116,7 +117,7 @@ def moverse(direccion, desviacion=0):
             
             return True
         
-        if datetime.now() - timpo_anterior > ESPERA_CAMBIO:
+        if datetime.now() - timpo_anterior > timedelta(seconds=ESPERA_CAMBIO):
             print("error en el movimiento por tiempo")
             return False
         time.sleep(0.1)
