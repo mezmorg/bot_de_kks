@@ -106,22 +106,13 @@ def check():
 
     if listo:
 
-        while listo:
+        x, y = listo[0]
+        h, w = listo[1]
 
-            x, y = listo[0]
-            h, w = listo[1]
+        pyautogui.click(x + w // 2, y + h // 2)
 
-            pyautogui.click(x + w // 2, y + h // 2)
-
-            time.sleep(0.3)
-
-            img, gray, edges = vision_grupo.capturar_pantalla()
-
-            listo = vision_grupo.detectar_template(
-                gray,
-                vision_grupo.templates["listo"]
-            )
-
+        time.sleep(0.1)
+        
         return
 
 

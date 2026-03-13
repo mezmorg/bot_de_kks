@@ -4,6 +4,7 @@ import vision
 import subprocess
 import sys
 import os
+from datetime import datetime
 
 ############################################
 # RUTAS DEL PROYECTO
@@ -22,7 +23,7 @@ ENEMIES_PATH = os.path.join(BASE_DIR, "enemies")
 DISTANCIA = 250
 PASOS = 5
 TIEMPO_PASO = 0.05
-ESPERA_CAMBIO = 4
+ESPERA_CAMBIO = 7
 
 
 ############################################
@@ -114,27 +115,24 @@ def moverse(direccion, desviacion=0):
     ############################################
     # ESPERAR CAMBIO DE MAPA
     ############################################
+    timpo_anterior = datetime.now()
+    while True:
 
-    time.sleep(ESPERA_CAMBIO)
+        img2, gray2, edges2 = vision.capturar_pantalla()
 
-    img2, gray2, edges2 = vision.capturar_pantalla()
+        cambios = vision.comparar_region(img,img2)
+        if cambios > 60000:
 
+            print("Movimiento exitoso:", direccion)
 
-    diff = abs(gray2.astype("int16") - gray.astype("int16")).mean()
-
-
-    if diff < 5:
-
-        print("No hubo cambio de mapa")
-
-        return False
-
-
-    print("Movimiento exitoso:", direccion)
-
-    subprocess.run([
-        sys.executable,
-        os.path.join(BASE_DIR,"grupo.py")
-    ])
-    
-    return True
+            subprocess.run([
+                sys.executable,
+                os.path.join(BASE_DIR,"grupo.py")
+            ])
+            
+            return True
+        
+        if datetime.now() - timpo_anterior > ESPERA_CAMBIO:
+            print("error en el movimiento por tiempo")
+            return False
+        time.sleep(0.1)

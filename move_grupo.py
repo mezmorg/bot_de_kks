@@ -1,93 +1,122 @@
 import time
 import pyautogui
-
 import vision_grupo
+from datetime import datetime
 
 
 ############################################
-# FUNCION MOVERSE
+# CONFIGURACION MOVIMIENTO
 ############################################
 
-def moverse(direccion, desviacion=50):
-
-    w, h = pyautogui.size()
-
-    cx = w // 2
-    cy = h // 2
-
-    ############################################
-    # DESVIACION
-    ############################################
-
-    if direccion in ["derecha", "izquierda"]:
-
-        cy = cy - desviacion
-
-    if direccion in ["arriba", "abajo"]:
-
-        cx = cx + desviacion
+DISTANCIA = 250
+PASOS = 5
+TIEMPO_PASO = 0.05
+ESPERA_CAMBIO = 7
 
 
-    pyautogui.moveTo(cx, cy)
+############################################
+# MOVERSE
+############################################
 
-    pyautogui.mouseDown()
-
-
-    ############################################
-    # VECTOR MOVIMIENTO
-    ############################################
-
-    dx, dy = {
-
-        "derecha": (250, 0),
-        "izquierda": (-250, 0),
-        "arriba": (0, -250),
-        "abajo": (0, 250)
-
-    }[direccion]
-
-
-    ############################################
-    # DESPLAZAMIENTO SUAVE
-    ############################################
-
-    for i in range(10):
-
-        pyautogui.moveRel(dx / 10, dy / 10, duration=0.05)
-
-    pyautogui.mouseUp()
-
-    time.sleep(1)
-
-
-    ############################################
-    # COMPROBAR CAMBIO DE SALA
-    ############################################
+def moverse(direccion, desviacion=0):
 
     img, gray, edges = vision_grupo.capturar_pantalla()
 
-
     flechas = {
-
         "derecha": vision_grupo.templates["flecha_derecha"],
         "izquierda": vision_grupo.templates["flecha_izquierda"],
         "arriba": vision_grupo.templates["flecha_arriba"],
         "abajo": vision_grupo.templates["flecha_abajo"]
-
     }
 
-
-    flecha = vision_grupo.detectar_template(
-        gray,
-        flechas[direccion]
-    )
-
-
-    if flecha:
-
-        time.sleep(1)
-
-        return True
+    # inverso para compensar el drag del mapa
+    dx,dy = {
+        "derecha":(-DISTANCIA,0),
+        "izquierda":(DISTANCIA,0),
+        "arriba":(0,DISTANCIA),
+        "abajo":(0,-DISTANCIA)
+    }[direccion]
 
 
-    return False
+    ############################################
+    # POSICION INICIAL DEL MOUSE
+    ############################################
+
+    w,h = pyautogui.size()
+
+    cx = w//2
+    cy = h//2
+
+
+    # aplicar desviación
+    if direccion in ["derecha","izquierda"]:
+        cy -= desviacion
+
+    if direccion in ["arriba","abajo"]:
+        cx += desviacion
+
+
+    pyautogui.moveTo(cx,cy)
+
+
+    ############################################
+    # ARRASTRAR MOUSE
+    ############################################
+
+    pyautogui.mouseDown()
+
+    paso_x = dx/PASOS
+    paso_y = dy/PASOS
+
+    flecha_detectada = False
+
+    for i in range(PASOS):
+
+        pyautogui.moveRel(paso_x,paso_y,duration=TIEMPO_PASO)
+
+        img, gray, edges = vision_grupo.capturar_pantalla()
+
+        res = vision_grupo.detectar_template(
+            gray,
+            flechas[direccion],
+            0.8
+        )
+
+        if res:
+            flecha_detectada = True
+
+
+    pyautogui.mouseUp()
+
+
+    ############################################
+    # SI NO HAY FLECHA NO HAY MOVIMIENTO
+    ############################################
+
+    if not flecha_detectada:
+
+        print("No se detectó flecha de movimiento")
+
+        return False
+
+
+    ############################################
+    # ESPERAR CAMBIO DE MAPA
+    ############################################
+
+    timpo_anterior = datetime.now()
+    while True:
+
+        img2, gray2, edges2 = vision_grupo.capturar_pantalla()
+
+        cambios = vision_grupo.comparar_region(img,img2)
+        if cambios > 60000:
+
+            print("Movimiento exitoso:", direccion)
+            
+            return True
+        
+        if datetime.now() - timpo_anterior > ESPERA_CAMBIO:
+            print("error en el movimiento por tiempo")
+            return False
+        time.sleep(0.1)

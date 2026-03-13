@@ -56,7 +56,16 @@ def combate():
 
             pyautogui.click(x+w//2,y+h//2)
 
-            time.sleep(0.4)
+            time.sleep(0.5)
+            listo = vision.detectar_template(
+                gray,
+                vision.templates["listo"]
+            )
+            if listo:
+                subprocess.run([
+                    sys.executable,
+                    os.path.join(BASE_DIR,"grupo.py")
+                ])
 
 
         ############################################

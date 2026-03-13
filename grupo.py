@@ -1,7 +1,7 @@
 import time
 import pygetwindow as gw
 import win32gui
-
+import random
 import vision_grupo
 import publi_grupo
 import move_grupo
@@ -99,15 +99,25 @@ def main():
     direccion = detectar_seguir(gray)
 
     if direccion:
+        desvio = random.randint(-70,70)
+        if desvio < 20 and 0 < desvio:
+            desvio = 20
+        if desvio < 0 and -20 < desvio:
+            desvio = -20
 
-        move_grupo.moverse(direccion)
-
+        while not move_grupo.moverse(direccion,desvio):
+            desvio = random.randint(-70,70)
+            if desvio < 20 and 0 < desvio:
+                desvio = 20
+            if desvio < 0 and -20 < desvio:
+                desvio = -20
+            time.sleep(0.1)
 
     ############################################
     # VOLVER A VENTANA PRINCIPAL
     ############################################
 
-    time.sleep(0.3)
+    time.sleep(0.1)
 
     publi_grupo.check()
 
